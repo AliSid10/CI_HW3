@@ -6,7 +6,7 @@ env1 =["SHFF", "FFFH", "FHFH", "HFFG"]
 env2= ["SFFFFF", "FFFHFF", "FHFHHH", "HFFFFG"]
 env3 = ['SFFHFFHH', 'HFFFFFHF', 'HFFHHFHH', 'HFHHHFFF', 'HFHHFHFF', 'FFFFFFFH', 'FHHFHFHH', 'FHHFHFFG'] 
 
-selectedEnv = env2
+selectedEnv = env3 # select any environment to check functionality.
 env = gym.make('FrozenLake-v1', desc=selectedEnv, render_mode="human", is_slippery = False)
 env.reset()
 env.render()
