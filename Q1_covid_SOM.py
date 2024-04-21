@@ -2,6 +2,8 @@ import csv
 import random
 import math
 from PIL import Image
+import geopandas as gpd
+import matplotlib.pyplot as plt
 
 
 class SOM:
@@ -129,6 +131,7 @@ class SOM:
             if show == True and e % stamp == 0:
                 self.showColors()
         self.showColors()
+        self.worldMap()
 
     def display(self):
         for i in self.weights:
@@ -172,8 +175,37 @@ class SOM:
         img.putdata([rgb for rgb in pixelsFlattened])
         img.show()
 
+    def worldMap(self):
+
+        world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+        colorMap = self.colors()
+
+        worldColors = {}
+        for c in list(self.data.keys()):
+            BMU = self.get_BMU(self.data[c])
+            color = colorMap[BMU[0]][BMU[1]]
+            worldColors[c] = color
+
+        def get_color_rgb(row):
+            country_name = row['name']
+            if country_name in worldColors:
+                return worldColors[country_name]
+            else:
+                return (128, 128, 128)
+
+        world['color_rgb'] = world.apply(get_color_rgb, axis=1)
+
+        world['color'] = world['color_rgb'].apply(
+            lambda x: '#%02x%02x%02x' % x)
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+        world.plot(ax=ax, color=world['color'], edgecolor='black')
+
+        plt.title('World Map with Custom RGB Colors')
+
+        plt.show()
+
 
 som = SOM(n=10, alpha=0.2, epoch=10000, decay_L=1, decay_N=1)
 
 som.learn('Q1_countrydata.csv', True, 1000)
-
